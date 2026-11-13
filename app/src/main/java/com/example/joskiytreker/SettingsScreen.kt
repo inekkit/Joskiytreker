@@ -18,143 +18,74 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun SettingsScreen(
-    onNavigateBack: () -> Unit = {}
-) {
+fun SettingsScreen(onNavigateBack: () -> Unit = {}) {
     val context = LocalContext.current
 
-    // Оборачиваем в Column со скроллом, так как экран может не влезть целиком
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF7F7F7))
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
-    ) {
-        // 1. Верхняя панель
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 20.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "<",
-                fontSize = 24.sp,
-                color = TextDark,
-                modifier = Modifier
-                    .padding(end = 16.dp)
-                    .clickable { onNavigateBack() }
-            )
-            Text(
-                text = "Настройки",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = TextDark
-            )
+    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp)) {
+        Row(modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "<", fontSize = 24.sp, color = MaterialTheme.colorScheme.onBackground, modifier = Modifier.padding(end = 16.dp).clickable { onNavigateBack() })
+            Text(text = "Настройки", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
         }
 
-        // 2. Группа "Основные"
         SettingsGroupTitle("Основные")
         SettingsCard {
-            SettingsItem(icon = "☀️", title = "Тема", value = "Светлая") {
-                Toast.makeText(context, "Выбор темы", Toast.LENGTH_SHORT).show()
+            Row(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "🌙", fontSize = 20.sp)
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(text = "Тёмная тема", fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.weight(1f))
+                Switch(
+                    checked = isDarkTheme.value,
+                    onCheckedChange = {
+                        isDarkTheme.value = it
+                        saveAppData(context)
+                    }
+                )
             }
-            HorizontalDivider(color = Color(0xFFEEEEEE), thickness = 1.dp)
-            SettingsItem(icon = "🔔", title = "Уведомления") {
-                Toast.makeText(context, "Настройки уведомлений", Toast.LENGTH_SHORT).show()
-            }
-            HorizontalDivider(color = Color(0xFFEEEEEE), thickness = 1.dp)
-            SettingsItem(icon = "⏰", title = "Напоминания") {
-                Toast.makeText(context, "Настройки напоминаний", Toast.LENGTH_SHORT).show()
-            }
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
+            SettingsItem(icon = "🔔", title = "Уведомления") { Toast.makeText(context, "Уведомления", Toast.LENGTH_SHORT).show() }
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
+            SettingsItem(icon = "⏰", title = "Напоминания") { Toast.makeText(context, "Напоминания", Toast.LENGTH_SHORT).show() }
         }
 
-        // 3. Группа "Приложение"
         SettingsGroupTitle("Приложение")
         SettingsCard {
-            SettingsItem(icon = "🌐", title = "Язык", value = "Русский") {
-                Toast.makeText(context, "Выбор языка", Toast.LENGTH_SHORT).show()
-            }
-            HorizontalDivider(color = Color(0xFFEEEEEE), thickness = 1.dp)
-            SettingsItem(icon = "☁️", title = "Резервное копирование") {
-                Toast.makeText(context, "Резервное копирование", Toast.LENGTH_SHORT).show()
-            }
-            HorizontalDivider(color = Color(0xFFEEEEEE), thickness = 1.dp)
-            SettingsItem(icon = "📄", title = "Экспорт данных") {
-                Toast.makeText(context, "Экспорт данных", Toast.LENGTH_SHORT).show()
-            }
+            SettingsItem(icon = "🌐", title = "Язык", value = "Русский") { Toast.makeText(context, "Язык", Toast.LENGTH_SHORT).show() }
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
+            SettingsItem(icon = "☁️", title = "Резервное копирование") { Toast.makeText(context, "Резервное копирование", Toast.LENGTH_SHORT).show() }
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 1.dp)
+            SettingsItem(icon = "📄", title = "Экспорт данных") { Toast.makeText(context, "Экспорт", Toast.LENGTH_SHORT).show() }
         }
 
-        // 4. Группа "Безопасность"
         SettingsGroupTitle("Безопасность")
         SettingsCard {
-            SettingsItem(icon = "🔒", title = "PIN-код") {
-                Toast.makeText(context, "Настройка PIN-кода", Toast.LENGTH_SHORT).show()
-            }
+            SettingsItem(icon = "🔒", title = "PIN-код") { Toast.makeText(context, "PIN", Toast.LENGTH_SHORT).show() }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
-// Заголовок группы (например, "Основные")
 @Composable
 fun SettingsGroupTitle(title: String) {
-    Text(
-        text = title,
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Bold,
-        color = Color.Gray,
-        modifier = Modifier.padding(vertical = 8.dp)
-    )
+    Text(text = title, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(vertical = 8.dp))
 }
 
-// Белая карточка, внутри которой лежат пункты
 @Composable
 fun SettingsCard(content: @Composable () -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
-        Column {
-            content()
-        }
+    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)) {
+        Column { content() }
     }
 }
 
-// Один пункт меню (иконка, название, значение справа, стрелочка)
 @Composable
-fun SettingsItem(
-    icon: String,
-    title: String,
-    value: String? = null,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() }
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+fun SettingsItem(icon: String, title: String, value: String? = null, onClick: () -> Unit) {
+    Row(modifier = Modifier.fillMaxWidth().clickable { onClick() }.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
         Text(text = icon, fontSize = 20.sp)
         Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = title,
-            fontSize = 16.sp,
-            color = TextDark,
-            modifier = Modifier.weight(1f)
-        )
+        Text(text = title, fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface, modifier = Modifier.weight(1f))
         if (value != null) {
-            Text(
-                text = value,
-                fontSize = 12.sp,
-                color = Color.Gray,
-                modifier = Modifier.padding(end = 8.dp)
-            )
+            Text(text = value, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(end = 8.dp))
         }
-        Text(text = ">", fontSize = 20.sp, color = TextDark)
+        Text(text = ">", fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurface)
     }
 }

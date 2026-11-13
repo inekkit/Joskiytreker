@@ -1,6 +1,6 @@
 package com.example.joskiytreker
 
-import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,18 +11,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-// Цвета
-val BackgroundGray = Color(0xFFF7F7F7)
-val TextDark = Color(0xFF2C2C2C)
-val CardGreen = Color(0xFFE8F5E9)
-val CardOrange = Color(0xFFFFF3E0)
-val CardBlue = Color(0xFFE1F5FE)
-val CardPurple = Color(0xFFF3E5F5)
+// Тёмный текст для светлых пастельных карточек
+private val DarkTextOnCard = Color(0xFF1C1C1C)
 
 @Composable
 fun HomeScreen(
@@ -31,29 +25,20 @@ fun HomeScreen(
     onNavigateToGoals: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {}
 ) {
-    val context = LocalContext.current
-
-    val topHabits = habitsList
-        .sortedByDescending { calculateStreak(it.startDate) }
-        .take(4)
-
-    val topGoals = goalsList
-        .sortedByDescending { goal ->
-            if (goal.targetAmount > 0) goal.currentAmount.toFloat() / goal.targetAmount.toFloat() else 0f
-        }
-        .take(2)
+    val topHabits = habitsList.sortedByDescending { calculateStreak(it.startDate) }.take(4)
+    val topGoals = goalsList.sortedByDescending { goal ->
+        if (goal.targetAmount > 0) goal.currentAmount.toFloat() / goal.targetAmount.toFloat() else 0f
+    }.take(2)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundGray)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp)
     ) {
         // Верхняя панель
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -61,7 +46,7 @@ fun HomeScreen(
                 text = "Мой\nтрекер",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextDark,
+                color = MaterialTheme.colorScheme.onBackground,
                 lineHeight = 24.sp
             )
             Text(
@@ -71,28 +56,21 @@ fun HomeScreen(
             )
         }
 
-        // Блок привычек
+        // Привычки
         if (topHabits.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "Нет привычек", color = Color.Gray, fontSize = 14.sp)
+            Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                Text(text = "Нет привычек", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
             }
         } else {
             topHabits.forEach { habit ->
-                val streak = calculateStreak(habit.startDate)
                 CompactCard(
                     title = habit.title,
-                    value = "$streak дней",
+                    value = "${calculateStreak(habit.startDate)} дней",
                     subtitle = "Лучшая серия: ${habit.bestStreak} дней",
                     backgroundColor = habit.iconColor,
                     iconEmoji = habit.iconEmoji
                 ) {
-                    val realIndex = habitsList.indexOf(habit)
-                    onNavigateToHabitDetail(realIndex)
+                    onNavigateToHabitDetail(habitsList.indexOf(habit))
                 }
             }
         }
@@ -102,25 +80,19 @@ fun HomeScreen(
             text = "Мои цели",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            color = TextDark,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
         )
 
-        // Блок целей
+        // Цели
         if (topGoals.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "Нет целей", color = Color.Gray, fontSize = 14.sp)
+            Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                Text(text = "Нет целей", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
             }
         } else {
             topGoals.forEach { goal ->
                 GoalCompactCard(goal = goal) {
-                    val realIndex = goalsList.indexOf(goal)
-                    onNavigateToGoalDetail(realIndex)
+                    onNavigateToGoalDetail(goalsList.indexOf(goal))
                 }
             }
         }
@@ -129,7 +101,6 @@ fun HomeScreen(
     }
 }
 
-// --- КАРТОЧКА ПРИВЫЧКИ ---
 @Composable
 fun CompactCard(
     title: String,
@@ -140,96 +111,66 @@ fun CompactCard(
     onClick: () -> Unit = {}
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .clickable { onClick() },
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = backgroundColor)
+        colors = CardDefaults.cardColors(containerColor = backgroundColor),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline) // <-- ГРАНИЦА
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 8.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
-                modifier = Modifier
-                    .size(36.dp)
-                    .clip(RoundedCornerShape(50))
-                    .background(Color.White.copy(alpha = 0.5f)),
+                modifier = Modifier.size(36.dp).clip(RoundedCornerShape(50)).background(Color.White.copy(alpha = 0.5f)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(text = iconEmoji, fontSize = 18.sp)
             }
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = title, fontSize = 14.sp, fontWeight = FontWeight.Medium, color = TextDark)
-                Text(text = value, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = TextDark)
-                Text(text = subtitle, fontSize = 12.sp, color = TextDark.copy(alpha = 0.7f))
+                Text(text = title, fontSize = 14.sp, fontWeight = FontWeight.Medium, color = DarkTextOnCard)
+                Text(text = value, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = DarkTextOnCard)
+                Text(text = subtitle, fontSize = 12.sp, color = DarkTextOnCard.copy(alpha = 0.7f))
             }
-            Text(text = ">", fontSize = 16.sp, color = TextDark)
+            Text(text = ">", fontSize = 16.sp, color = DarkTextOnCard)
         }
     }
 }
 
-// --- КАРТОЧКА ЦЕЛИ ---
 @Composable
-fun GoalCompactCard(
-    goal: Goal,
-    onClick: () -> Unit = {}
-) {
-    val progress = if (goal.targetAmount > 0) {
-        goal.currentAmount.toFloat() / goal.targetAmount.toFloat()
-    } else 0f
+fun GoalCompactCard(goal: Goal, onClick: () -> Unit = {}) {
+    val progress = if (goal.targetAmount > 0) goal.currentAmount.toFloat() / goal.targetAmount.toFloat() else 0f
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .clickable { onClick() },
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline) // <-- ГРАНИЦА
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
-                modifier = Modifier
-                    .size(36.dp)
-                    .clip(RoundedCornerShape(50))
-                    .background(goal.iconColor), // <-- ЦВЕТ ИЗ ЦЕЛИ
+                modifier = Modifier.size(36.dp).clip(RoundedCornerShape(50)).background(goal.iconColor),
                 contentAlignment = Alignment.Center
             ) {
                 Text(text = goal.iconEmoji, fontSize = 18.sp)
             }
             Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = goal.title,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = TextDark
-                )
-                Text(
-                    text = "${goal.currentAmount}/${goal.targetAmount}",
-                    fontSize = 12.sp,
-                    color = TextDark
-                )
+                Text(text = goal.title, fontSize = 14.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface)
+                Text(text = "${goal.currentAmount}/${goal.targetAmount}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(modifier = Modifier.height(4.dp))
                 LinearProgressIndicator(
                     progress = { progress.coerceIn(0f, 1f) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(6.dp)
-                        .clip(RoundedCornerShape(3.dp)),
+                    modifier = Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(3.dp)),
                     color = goal.progressColor,
-                    trackColor = Color.LightGray.copy(alpha = 0.3f)
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant
                 )
             }
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = ">", fontSize = 16.sp, color = TextDark)
+            Text(text = ">", fontSize = 16.sp, color = MaterialTheme.colorScheme.onSurface)
         }
     }
 }

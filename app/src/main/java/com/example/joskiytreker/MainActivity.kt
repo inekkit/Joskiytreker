@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -25,7 +24,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            JoskiytrekerTheme {
+            JoskiytrekerTheme(darkTheme = isDarkTheme.value) {
                 val context = LocalContext.current
 
                 // --- ЗАГРУЗКА ДАННЫХ ПРИ СТАРТЕ ---
@@ -39,6 +38,7 @@ class MainActivity : ComponentActivity() {
                         profileStatus.value = data.profileStatus
                         profileEmoji.value = data.profileEmoji
                         profileAvatarColorValue.value = data.profileAvatarColorValue
+                        isDarkTheme.value = data.isDarkTheme
                     }
                 }
 
@@ -138,6 +138,7 @@ class MainActivity : ComponentActivity() {
                         // --- ПРОФИЛЬ И НАСТРОЙКИ ---
                         composable("profile") {
                             ProfileScreen(
+                                onNavigateBack = { navController.popBackStack() }, // <-- ДОБАВЛЕНО
                                 onNavigateToSettings = { navController.navigate("settings") },
                                 onNavigateToEditProfile = { navController.navigate("edit_profile") },
                                 onNavigateToGoals = { navController.navigate("goals") }
@@ -165,7 +166,9 @@ class MainActivity : ComponentActivity() {
 // Нижняя панель навигации
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
-    NavigationBar(containerColor = Color.White) {
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.surface
+    ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
 
@@ -173,6 +176,13 @@ fun BottomNavigationBar(navController: NavHostController) {
             icon = { Text("🏠", fontSize = 20.sp) },
             label = { Text("Главная", fontSize = 10.sp) },
             selected = currentRoute == "home",
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = MaterialTheme.colorScheme.onSurface,
+                selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                indicatorColor = MaterialTheme.colorScheme.primaryContainer
+            ),
             onClick = {
                 navController.navigate("home") {
                     popUpTo("home") { inclusive = true }
@@ -183,6 +193,13 @@ fun BottomNavigationBar(navController: NavHostController) {
             icon = { Text("⭐", fontSize = 20.sp) },
             label = { Text("Привычки", fontSize = 10.sp) },
             selected = currentRoute == "habits",
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = MaterialTheme.colorScheme.onSurface,
+                selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                indicatorColor = MaterialTheme.colorScheme.primaryContainer
+            ),
             onClick = {
                 navController.navigate("habits") {
                     popUpTo("home")
@@ -193,6 +210,13 @@ fun BottomNavigationBar(navController: NavHostController) {
             icon = { Text("🎯", fontSize = 20.sp) },
             label = { Text("Цели", fontSize = 10.sp) },
             selected = currentRoute == "goals",
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = MaterialTheme.colorScheme.onSurface,
+                selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                indicatorColor = MaterialTheme.colorScheme.primaryContainer
+            ),
             onClick = {
                 navController.navigate("goals") {
                     popUpTo("home")
@@ -201,8 +225,15 @@ fun BottomNavigationBar(navController: NavHostController) {
         )
         NavigationBarItem(
             icon = { Text("👤", fontSize = 20.sp) },
-            label = { Text("Профиль", fontSize = 10.sp) },
+            label = { Text("Профиль", fontSize = 10.sp) }, // <-- ИСПРАВЛЕНО (убрал лишний composable)
             selected = currentRoute == "profile",
+            colors = NavigationBarItemDefaults.colors(
+                selectedIconColor = MaterialTheme.colorScheme.onSurface,
+                selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                indicatorColor = MaterialTheme.colorScheme.primaryContainer
+            ),
             onClick = {
                 navController.navigate("profile") {
                     popUpTo("home")

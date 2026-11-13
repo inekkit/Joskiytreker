@@ -19,7 +19,8 @@ data class AppData(
     val profileName: String = "Имя",
     val profileStatus: String = "В пути к лучшей версии себя",
     val profileEmoji: String = "👤",
-    val profileAvatarColorValue: Int = 0xFFE3F2FD.toInt() // <-- Int
+    val profileAvatarColorValue: Int = 0xFFE3F2FD.toInt(),
+    val isDarkTheme: Boolean = false // <-- ДОБАВЛЕНО
 )
 
 object AppDataSerializer : Serializer<AppData> {
@@ -52,7 +53,8 @@ fun saveAppData(context: Context) {
                 profileName = profileName.value,
                 profileStatus = profileStatus.value,
                 profileEmoji = profileEmoji.value,
-                profileAvatarColorValue = profileAvatarColorValue.value
+                profileAvatarColorValue = profileAvatarColorValue.value,
+                isDarkTheme = isDarkTheme.value // <-- ДОБАВЛЕНО
             )
         }
     }

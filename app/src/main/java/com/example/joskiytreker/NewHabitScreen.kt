@@ -43,12 +43,12 @@ fun NewHabitScreen(
     var title by remember { mutableStateOf("") }
     var isGood by remember { mutableStateOf(true) }
     var selectedEmoji by remember { mutableStateOf("⭐") }
-    var selectedColor by remember { mutableStateOf(Color(0xFF4CAF50)) }
+    var selectedColor by remember { mutableStateOf(Color(0xFFB2DFDB)) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp, vertical = 20.dp)
     ) {
@@ -61,7 +61,7 @@ fun NewHabitScreen(
             Text(
                 text = "<",
                 fontSize = 24.sp,
-                color = TextDark,
+                color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
                     .padding(end = 16.dp)
                     .clickable { onNavigateBack() }
@@ -70,7 +70,7 @@ fun NewHabitScreen(
                 text = "Новая привычка",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextDark
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
 
@@ -83,44 +83,52 @@ fun NewHabitScreen(
                     .weight(1f)
                     .height(50.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(if (isGood) Color(0xFF66BB6A) else Color(0xFFE0E0E0))
+                    .background(if (isGood) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant)
                     .clickable { isGood = true },
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "Полезная", color = if (isGood) Color.White else Color.Gray, fontSize = 16.sp)
+                Text(
+                    text = "Полезная",
+                    color = if (isGood) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 16.sp
+                )
             }
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .height(50.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(if (!isGood) Color(0xFF66BB6A) else Color(0xFFE0E0E0))
+                    .background(if (!isGood) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant)
                     .clickable { isGood = false },
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "Вредная", color = if (!isGood) Color.White else Color.Gray, fontSize = 16.sp)
+                Text(
+                    text = "Вредная",
+                    color = if (!isGood) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 16.sp
+                )
             }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Text(text = "Название", fontSize = 14.sp, color = TextDark, fontWeight = FontWeight.Medium)
+        Text(text = "Название", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Medium)
         Spacer(modifier = Modifier.height(4.dp))
         OutlinedTextField(
             value = title,
             onValueChange = { title = it },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("Например: бегать по утрам", color = Color.Gray) },
+            placeholder = { Text("Например: бегать по утрам", color = MaterialTheme.colorScheme.onSurfaceVariant) },
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
-                unfocusedBorderColor = Color(0xFFE0E0E0),
-                focusedBorderColor = Color(0xFF66BB6A)
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                focusedBorderColor = MaterialTheme.colorScheme.primary
             )
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Эмодзи", fontSize = 14.sp, color = TextDark, fontWeight = FontWeight.Medium)
+        Text(text = "Эмодзи", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Medium)
         Spacer(modifier = Modifier.height(8.dp))
         LazyVerticalGrid(
             columns = GridCells.Fixed(6),
@@ -135,7 +143,7 @@ fun NewHabitScreen(
                     modifier = Modifier
                         .size(48.dp)
                         .clip(CircleShape)
-                        .background(if (selectedEmoji == emoji) Color(0xFF66BB6A) else Color(0xFFF5F5F5))
+                        .background(if (selectedEmoji == emoji) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant)
                         .clickable { selectedEmoji = emoji },
                     contentAlignment = Alignment.Center
                 ) {
@@ -146,7 +154,7 @@ fun NewHabitScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Цвет иконки", fontSize = 14.sp, color = TextDark, fontWeight = FontWeight.Medium)
+        Text(text = "Цвет иконки", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Medium)
         Spacer(modifier = Modifier.height(8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -160,7 +168,7 @@ fun NewHabitScreen(
                         .background(color)
                         .border(
                             width = if (selectedColor == color) 3.dp else 1.dp,
-                            color = if (selectedColor == color) Color(0xFF66BB6A) else Color.LightGray,
+                            color = if (selectedColor == color) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                             shape = CircleShape
                         )
                         .clickable { selectedColor = color }
@@ -183,7 +191,7 @@ fun NewHabitScreen(
                         startDate = System.currentTimeMillis(),
                         bestStreak = 0,
                         isGood = isGood,
-                        iconColorValue = selectedColor.toArgb(), // <-- ИСПРАВЛЕНО
+                        iconColorValue = selectedColor.toArgb(),
                         iconEmoji = selectedEmoji
                     )
                 )
@@ -196,9 +204,9 @@ fun NewHabitScreen(
                 .fillMaxWidth()
                 .height(56.dp),
             shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF66BB6A))
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
-            Text(text = "Создать", fontSize = 16.sp, color = Color.White)
+            Text(text = "Создать", fontSize = 16.sp, color = MaterialTheme.colorScheme.onPrimary)
         }
 
         Spacer(modifier = Modifier.height(16.dp))

@@ -22,13 +22,12 @@ fun AddFundsScreen(
     onNavigateBack: () -> Unit = {}
 ) {
     val context = LocalContext.current
-
     val goal = goalsList.getOrNull(goalIndex)
 
     if (goal == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("Цель не найдена")
+                Text("Цель не найдена", color = MaterialTheme.colorScheme.onBackground)
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(onClick = onNavigateBack) { Text("Назад") }
             }
@@ -47,84 +46,62 @@ fun AddFundsScreen(
 
     fun onKeyPress(key: String) {
         if (key == "⌫") {
-            if (amountText.isNotEmpty()) {
-                amountText = amountText.dropLast(1)
-            }
+            if (amountText.isNotEmpty()) amountText = amountText.dropLast(1)
         } else if (key == ".") {
-            if (!amountText.contains(".")) {
-                amountText += key
-            }
+            if (!amountText.contains(".")) amountText += key
         } else {
-            if (amountText == "0") {
-                amountText = key
-            } else {
-                amountText += key
-            }
+            if (amountText == "0") amountText = key else amountText += key
         }
     }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp)
     ) {
-        // 1. Верхняя панель
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 20.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "<",
                 fontSize = 24.sp,
-                color = TextDark,
-                modifier = Modifier
-                    .padding(end = 16.dp)
-                    .clickable { onNavigateBack() }
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(end = 16.dp).clickable { onNavigateBack() }
             )
             Text(
                 text = "Пополнить цель",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = TextDark
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
 
-        // 2. Карточка с информацией о цели
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFF7F7F7))
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
         ) {
-            Row(
-                modifier = Modifier.padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                 Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(RoundedCornerShape(50))
-                        .background(goal.iconColor),
+                    modifier = Modifier.size(48.dp).clip(RoundedCornerShape(50)).background(goal.iconColor),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(goal.iconEmoji, fontSize = 24.sp) // <-- ИСПРАВЛЕНО: ЭМОДЗИ ИЗ ЦЕЛИ
+                    Text(goal.iconEmoji, fontSize = 24.sp)
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
-                    Text(text = goal.title, fontSize = 14.sp, fontWeight = FontWeight.Medium, color = TextDark)
-                    Text(text = "${goal.currentAmount}/${goal.targetAmount}", fontSize = 12.sp, color = Color.Gray)
+                    Text(text = goal.title, fontSize = 14.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface)
+                    Text(text = "${goal.currentAmount}/${goal.targetAmount}", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // 3. Поле ввода суммы
-        Text(text = "Сумма", fontSize = 14.sp, color = TextDark, fontWeight = FontWeight.Medium)
+        Text(text = "Сумма", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Medium)
         Spacer(modifier = Modifier.height(8.dp))
-
         OutlinedTextField(
             value = amountText,
             onValueChange = { },
@@ -133,69 +110,55 @@ fun AddFundsScreen(
             shape = RoundedCornerShape(12.dp),
             textStyle = LocalTextStyle.current.copy(fontSize = 20.sp, fontWeight = FontWeight.Bold),
             colors = OutlinedTextFieldDefaults.colors(
-                unfocusedBorderColor = Color(0xFFE0E0E0),
-                focusedBorderColor = Color(0xFF66BB6A)
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                focusedBorderColor = MaterialTheme.colorScheme.primary
             )
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 4. Кнопки Пополнить / Уменьшить
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Button(
                 onClick = {
                     val amount = amountText.toIntOrNull() ?: 0
                     goal.currentAmount += amount
-                    saveAppData(context) // <-- ДОБАВЛЕНО СОХРАНЕНИЕ
+                    saveAppData(context)
                     Toast.makeText(context, "Пополнено на $amount", Toast.LENGTH_SHORT).show()
                     onNavigateBack()
                 },
                 modifier = Modifier.weight(1f).height(50.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF66BB6A))
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
             ) {
-                Text(text = "Пополнить", fontSize = 14.sp, color = Color.White)
+                Text(text = "Пополнить", fontSize = 14.sp, color = MaterialTheme.colorScheme.onPrimary)
             }
             OutlinedButton(
                 onClick = {
                     val amount = amountText.toIntOrNull() ?: 0
                     goal.currentAmount = (goal.currentAmount - amount).coerceAtLeast(0)
-                    saveAppData(context) // <-- ДОБАВЛЕНО СОХРАНЕНИЕ
+                    saveAppData(context)
                     Toast.makeText(context, "Уменьшено на $amount", Toast.LENGTH_SHORT).show()
                     onNavigateBack()
                 },
                 modifier = Modifier.weight(1f).height(50.dp),
-                shape = RoundedCornerShape(12.dp),
-                border = ButtonDefaults.outlinedButtonBorder.copy(
-                    brush = androidx.compose.ui.graphics.SolidColor(Color(0xFF66BB6A))
-                )
+                shape = RoundedCornerShape(12.dp)
             ) {
-                Text(text = "Уменьшить", fontSize = 14.sp, color = Color(0xFF66BB6A))
+                Text(text = "Уменьшить", fontSize = 14.sp, color = MaterialTheme.colorScheme.primary)
             }
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // 5. Цифровая клавиатура
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+        Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             keyboardRows.forEach { row ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     row.forEach { key ->
                         Box(
                             modifier = Modifier
                                 .weight(1f)
                                 .height(60.dp)
                                 .clip(RoundedCornerShape(12.dp))
-                                .background(if (key == "⌫") Color(0xFFE0E0E0) else Color(0xFFF5F5F5))
+                                .background(if (key == "⌫") MaterialTheme.colorScheme.surfaceVariant else MaterialTheme.colorScheme.surface)
                                 .clickable { onKeyPress(key) },
                             contentAlignment = Alignment.Center
                         ) {
@@ -203,7 +166,7 @@ fun AddFundsScreen(
                                 text = key,
                                 fontSize = 24.sp,
                                 fontWeight = if (key == "⌫") FontWeight.Normal else FontWeight.Medium,
-                                color = TextDark
+                                color = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }

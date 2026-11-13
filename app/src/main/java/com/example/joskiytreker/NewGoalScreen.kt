@@ -35,7 +35,7 @@ fun NewGoalScreen(
     var currentAmount by remember { mutableStateOf("0") }
     var description by remember { mutableStateOf("") }
     var selectedEmoji by remember { mutableStateOf("🎯") }
-    var selectedColor by remember { mutableStateOf(Color(0xFFB2DFDB)) } // нежно-бирюзовый по умолчанию
+    var selectedColor by remember { mutableStateOf(Color(0xFFB2DFDB)) }
 
     val goalEmojis = listOf("🎯", "📱", "✈️", "🎓", "🚗", "🏠", "💍", "🎮", "🎸", "💻", "⌚", "📸")
     val availableColors = listOf(
@@ -50,7 +50,7 @@ fun NewGoalScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier
@@ -67,7 +67,7 @@ fun NewGoalScreen(
                 Text(
                     text = "<",
                     fontSize = 24.sp,
-                    color = TextDark,
+                    color = MaterialTheme.colorScheme.onBackground,
                     modifier = Modifier
                         .padding(end = 16.dp)
                         .clickable { onNavigateBack() }
@@ -76,27 +76,27 @@ fun NewGoalScreen(
                     text = "Новая цель",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = TextDark
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
 
-            Text(text = "Название", fontSize = 14.sp, color = TextDark, fontWeight = FontWeight.Medium)
+            Text(text = "Название", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Medium)
             Spacer(modifier = Modifier.height(4.dp))
             OutlinedTextField(
                 value = title,
                 onValueChange = { title = it },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Например: Накопить на телефон", color = Color.Gray) },
+                placeholder = { Text("Например: Накопить на телефон", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color(0xFFE0E0E0),
-                    focusedBorderColor = Color(0xFF66BB6A)
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary
                 )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Сумма цели", fontSize = 14.sp, color = TextDark, fontWeight = FontWeight.Medium)
+            Text(text = "Сумма цели", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Medium)
             Spacer(modifier = Modifier.height(4.dp))
             OutlinedTextField(
                 value = targetAmount,
@@ -104,17 +104,17 @@ fun NewGoalScreen(
                     if (newValue.all { it.isDigit() }) targetAmount = newValue
                 },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Например: 30000", color = Color.Gray) },
+                placeholder = { Text("Например: 30000", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color(0xFFE0E0E0),
-                    focusedBorderColor = Color(0xFF66BB6A)
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary
                 )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Текущая сумма", fontSize = 14.sp, color = TextDark, fontWeight = FontWeight.Medium)
+            Text(text = "Текущая сумма", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Medium)
             Spacer(modifier = Modifier.height(4.dp))
             OutlinedTextField(
                 value = currentAmount,
@@ -122,17 +122,17 @@ fun NewGoalScreen(
                     if (newValue.all { it.isDigit() }) currentAmount = newValue
                 },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("0", color = Color.Gray) },
+                placeholder = { Text("0", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color(0xFFE0E0E0),
-                    focusedBorderColor = Color(0xFF66BB6A)
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary
                 )
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Эмодзи", fontSize = 14.sp, color = TextDark, fontWeight = FontWeight.Medium)
+            Text(text = "Эмодзи", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Medium)
             Spacer(modifier = Modifier.height(8.dp))
             LazyVerticalGrid(
                 columns = GridCells.Fixed(6),
@@ -147,7 +147,7 @@ fun NewGoalScreen(
                         modifier = Modifier
                             .size(48.dp)
                             .clip(CircleShape)
-                            .background(if (selectedEmoji == emoji) Color(0xFF66BB6A) else Color(0xFFF5F5F5))
+                            .background(if (selectedEmoji == emoji) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant)
                             .clickable { selectedEmoji = emoji },
                         contentAlignment = Alignment.Center
                     ) {
@@ -158,13 +158,13 @@ fun NewGoalScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Цвет иконки", fontSize = 14.sp, color = TextDark, fontWeight = FontWeight.Medium)
+            Text(text = "Цвет иконки", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Medium)
             Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                availableColors.forEach { color -> // <-- ИСПРАВЛЕНО: было goalColors
+                availableColors.forEach { color ->
                     Box(
                         modifier = Modifier
                             .size(40.dp)
@@ -172,7 +172,7 @@ fun NewGoalScreen(
                             .background(color)
                             .border(
                                 width = if (selectedColor == color) 3.dp else 1.dp,
-                                color = if (selectedColor == color) Color(0xFF66BB6A) else Color.LightGray,
+                                color = if (selectedColor == color) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                 shape = CircleShape
                             )
                             .clickable { selectedColor = color }
@@ -182,7 +182,7 @@ fun NewGoalScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Описание (необязательно)", fontSize = 14.sp, color = TextDark, fontWeight = FontWeight.Medium)
+            Text(text = "Описание (необязательно)", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Medium)
             Spacer(modifier = Modifier.height(4.dp))
             OutlinedTextField(
                 value = description,
@@ -190,11 +190,11 @@ fun NewGoalScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(100.dp),
-                placeholder = { Text("Зачем вам эта цель?", color = Color.Gray) },
+                placeholder = { Text("Зачем вам эта цель?", color = MaterialTheme.colorScheme.onSurfaceVariant) },
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color(0xFFE0E0E0),
-                    focusedBorderColor = Color(0xFF66BB6A)
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                    focusedBorderColor = MaterialTheme.colorScheme.primary
                 )
             )
 
@@ -233,9 +233,9 @@ fun NewGoalScreen(
                 .padding(horizontal = 16.dp, vertical = 16.dp)
                 .height(56.dp),
             shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF66BB6A))
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
-            Text(text = "Создать", fontSize = 16.sp, color = Color.White)
+            Text(text = "Создать", fontSize = 16.sp, color = MaterialTheme.colorScheme.onPrimary)
         }
     }
 }

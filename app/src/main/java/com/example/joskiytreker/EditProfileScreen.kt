@@ -25,11 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun EditProfileScreen(
-    onNavigateBack: () -> Unit = {}
-) {
+fun EditProfileScreen(onNavigateBack: () -> Unit = {}) {
     val context = LocalContext.current
-
     var name by remember { mutableStateOf(profileName.value) }
     var status by remember { mutableStateOf(profileStatus.value) }
     var selectedEmoji by remember { mutableStateOf(profileEmoji.value) }
@@ -37,113 +34,40 @@ fun EditProfileScreen(
 
     val availableEmojis = listOf("👤", "😀", "😎", "🦸", "🐱", "🐶", "🦊", "🐼", "🚀", "🌟", "🔥", "🍀")
     val availableColors = listOf(
-        Color(0xFFB2DFDB), // Нежно-бирюзовый
-        Color(0xFFFFCCBC), // Нежно-персиковый
-        Color(0xFFC5CAE9), // Нежно-лавандовый
-        Color(0xFFF8BBD0), // Нежно-розовый
-        Color(0xFFDCEDC8), // Нежно-салатовый
-        Color(0xFFFFF9C4)  // Нежно-лимонный
+        Color(0xFFB2DFDB), Color(0xFFFFCCBC), Color(0xFFC5CAE9),
+        Color(0xFFF8BBD0), Color(0xFFDCEDC8), Color(0xFFFFF9C4)
     )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-    ) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp, bottom = 24.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "<",
-                    fontSize = 24.sp,
-                    color = TextDark,
-                    modifier = Modifier
-                        .padding(end = 16.dp)
-                        .clickable { onNavigateBack() }
-                )
-                Text(
-                    text = "Редактирование профиля",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextDark
-                )
+    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        Column(modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp)) {
+            Row(modifier = Modifier.fillMaxWidth().padding(top = 20.dp, bottom = 24.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "<", fontSize = 24.sp, color = MaterialTheme.colorScheme.onBackground, modifier = Modifier.padding(end = 16.dp).clickable { onNavigateBack() })
+                Text(text = "Редактирование профиля", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
             }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(RoundedCornerShape(50))
-                        .background(selectedColor),
-                    contentAlignment = Alignment.Center
-                ) {
+            Box(modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp), contentAlignment = Alignment.Center) {
+                Box(modifier = Modifier.size(100.dp).clip(RoundedCornerShape(50)).background(selectedColor), contentAlignment = Alignment.Center) {
                     Text(selectedEmoji, fontSize = 50.sp)
                 }
             }
 
-            Text(text = "Имя", fontSize = 14.sp, color = TextDark, fontWeight = FontWeight.Medium)
+            Text(text = "Имя", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Medium)
             Spacer(modifier = Modifier.height(4.dp))
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color(0xFFE0E0E0),
-                    focusedBorderColor = Color(0xFF66BB6A)
-                )
-            )
+            OutlinedTextField(value = name, onValueChange = { name = it }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp), colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = MaterialTheme.colorScheme.outline, focusedBorderColor = MaterialTheme.colorScheme.primary))
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Статус", fontSize = 14.sp, color = TextDark, fontWeight = FontWeight.Medium)
+            Text(text = "Статус", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Medium)
             Spacer(modifier = Modifier.height(4.dp))
-            OutlinedTextField(
-                value = status,
-                onValueChange = { status = it },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color(0xFFE0E0E0),
-                    focusedBorderColor = Color(0xFF66BB6A)
-                )
-            )
+            OutlinedTextField(value = status, onValueChange = { status = it }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp), colors = OutlinedTextFieldDefaults.colors(unfocusedBorderColor = MaterialTheme.colorScheme.outline, focusedBorderColor = MaterialTheme.colorScheme.primary))
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Эмодзи аватара", fontSize = 14.sp, color = TextDark, fontWeight = FontWeight.Medium)
+            Text(text = "Эмодзи аватара", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Medium)
             Spacer(modifier = Modifier.height(8.dp))
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(6),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+            LazyVerticalGrid(columns = GridCells.Fixed(6), modifier = Modifier.fillMaxWidth().height(120.dp), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(availableEmojis) { emoji ->
-                    Box(
-                        modifier = Modifier
-                            .size(48.dp)
-                            .clip(CircleShape)
-                            .background(if (selectedEmoji == emoji) Color(0xFF66BB6A) else Color(0xFFF5F5F5))
-                            .clickable { selectedEmoji = emoji },
-                        contentAlignment = Alignment.Center
-                    ) {
+                    Box(modifier = Modifier.size(48.dp).clip(CircleShape).background(if (selectedEmoji == emoji) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant).clickable { selectedEmoji = emoji }, contentAlignment = Alignment.Center) {
                         Text(text = emoji, fontSize = 24.sp)
                     }
                 }
@@ -151,25 +75,11 @@ fun EditProfileScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Цвет фона аватара", fontSize = 14.sp, color = TextDark, fontWeight = FontWeight.Medium)
+            Text(text = "Цвет фона аватара", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Medium)
             Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 availableColors.forEach { color ->
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .background(color)
-                            .border(
-                                width = if (selectedColor == color) 3.dp else 1.dp,
-                                color = if (selectedColor == color) Color(0xFF66BB6A) else Color.LightGray,
-                                shape = CircleShape
-                            )
-                            .clickable { selectedColor = color }
-                    )
+                    Box(modifier = Modifier.size(40.dp).clip(CircleShape).background(color).border(width = if (selectedColor == color) 3.dp else 1.dp, color = if (selectedColor == color) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline, shape = CircleShape).clickable { selectedColor = color })
                 }
             }
 
@@ -181,19 +91,16 @@ fun EditProfileScreen(
                 profileName.value = name
                 profileStatus.value = status
                 profileEmoji.value = selectedEmoji
-                profileAvatarColorValue.value = selectedColor.toArgb() // <-- ИСПРАВЛЕНО
+                profileAvatarColorValue.value = selectedColor.toArgb()
                 saveAppData(context)
                 Toast.makeText(context, "Профиль сохранён", Toast.LENGTH_SHORT).show()
                 onNavigateBack()
             },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 16.dp)
-                .height(56.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 16.dp).height(56.dp),
             shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF66BB6A))
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
         ) {
-            Text(text = "Сохранить", fontSize = 16.sp, color = Color.White)
+            Text(text = "Сохранить", fontSize = 16.sp, color = MaterialTheme.colorScheme.onPrimary)
         }
     }
 }
